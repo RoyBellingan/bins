@@ -80,7 +80,7 @@
    </widget>
    <widget class="QLineEdit" name="p_iva">
     <property name="enabled">
-     <bool>false</bool>
+     <bool>true</bool>
     </property>
     <property name="geometry">
      <rect>
@@ -114,7 +114,7 @@
    </widget>
    <widget class="QLineEdit" name="indirizzo">
     <property name="enabled">
-     <bool>false</bool>
+     <bool>true</bool>
     </property>
     <property name="geometry">
      <rect>
@@ -148,7 +148,7 @@
    </widget>
    <widget class="QLineEdit" name="contatore_bin">
     <property name="enabled">
-     <bool>false</bool>
+     <bool>true</bool>
     </property>
     <property name="geometry">
      <rect>
