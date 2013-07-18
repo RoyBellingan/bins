@@ -2,7 +2,8 @@
 #define BINS_H
 
 #include <QMainWindow>
-
+#include <QTableView>
+#include "tableeditor.h"
 namespace Ui {
 class bins;
 }
@@ -16,12 +17,15 @@ public:
     ~bins();
     
 private slots:
-    void on_nome_triggered();
+    void on_actionGestione_Clienti_triggered();
+    void recount(int q);
 
-    void on_add_bins_clicked();
+    void on_salva_bins_clicked();
 
 private:
+    QTableView *view;
     Ui::bins *ui;
+    TableEditor *editor;
 };
 
 #endif // BINS_H

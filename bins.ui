@@ -2,30 +2,33 @@
 <ui version="4.0">
  <class>bins</class>
  <widget class="QMainWindow" name="bins">
+  <property name="enabled">
+   <bool>true</bool>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1024</width>
-    <height>768</height>
+    <width>550</width>
+    <height>480</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>1024</width>
-    <height>768</height>
+    <width>480</width>
+    <height>480</height>
    </size>
   </property>
   <property name="windowTitle">
    <string>bins</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="QLabel" name="label">
+   <widget class="QLabel" name="label_nome">
     <property name="geometry">
      <rect>
       <x>90</x>
       <y>60</y>
-      <width>191</width>
+      <width>241</width>
       <height>31</height>
      </rect>
     </property>
@@ -57,7 +60,7 @@
      <enum>Qt::ClickFocus</enum>
     </property>
    </widget>
-   <widget class="QLabel" name="label_2">
+   <widget class="QLabel" name="label_piva">
     <property name="geometry">
      <rect>
       <x>90</x>
@@ -91,7 +94,7 @@
      </rect>
     </property>
    </widget>
-   <widget class="QLabel" name="label_3">
+   <widget class="QLabel" name="label_indirizzo">
     <property name="geometry">
      <rect>
       <x>90</x>
@@ -125,7 +128,7 @@
      </rect>
     </property>
    </widget>
-   <widget class="QLabel" name="label_4">
+   <widget class="QLabel" name="label_bins">
     <property name="geometry">
      <rect>
       <x>90</x>
@@ -146,52 +149,61 @@
      <string>Bins in Prestito</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="contatore_bin">
-    <property name="enabled">
-     <bool>true</bool>
-    </property>
+   <widget class="QSpinBox" name="contatore_bins">
     <property name="geometry">
      <rect>
       <x>110</x>
       <y>280</y>
-      <width>151</width>
+      <width>141</width>
       <height>61</height>
      </rect>
     </property>
     <property name="font">
      <font>
-      <family>Open Sans</family>
-      <pointsize>36</pointsize>
-      <weight>50</weight>
-      <bold>false</bold>
+      <pointsize>22</pointsize>
      </font>
     </property>
-    <property name="text">
-     <string>55</string>
+    <property name="wrapping">
+     <bool>false</bool>
     </property>
-    <property name="alignment">
-     <set>Qt::AlignCenter</set>
-    </property>
-    <property name="readOnly">
+    <property name="frame">
      <bool>true</bool>
     </property>
+    <property name="buttonSymbols">
+     <enum>QAbstractSpinBox::PlusMinus</enum>
+    </property>
+    <property name="accelerated">
+     <bool>false</bool>
+    </property>
+    <property name="minimum">
+     <number>-99999</number>
+    </property>
+    <property name="maximum">
+     <number>99999</number>
+    </property>
+    <property name="value">
+     <number>0</number>
+    </property>
    </widget>
-   <widget class="QPushButton" name="add_bins">
+   <widget class="QPushButton" name="salva_bins">
     <property name="geometry">
      <rect>
-      <x>840</x>
-      <y>110</y>
-      <width>41</width>
-      <height>41</height>
+      <x>310</x>
+      <y>280</y>
+      <width>111</width>
+      <height>51</height>
      </rect>
     </property>
     <property name="font">
      <font>
-      <pointsize>36</pointsize>
+      <pointsize>22</pointsize>
      </font>
     </property>
+    <property name="toolTip">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Click sinistro per salvare&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Tasto rapido per salvare CTRL + S&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;Tasto rapido per annullare ALT + S&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
     <property name="text">
-     <string>+</string>
+     <string>Salva</string>
     </property>
    </widget>
   </widget>
@@ -200,47 +212,26 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1024</width>
-     <height>25</height>
+     <width>550</width>
+     <height>27</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
     <property name="title">
      <string>File</string>
     </property>
-    <addaction name="actionSalva_con_nome"/>
-    <addaction name="actionEsci_Salva"/>
+    <addaction name="actionGestione_Clienti"/>
     <addaction name="actionEsci"/>
    </widget>
    <widget class="QMenu" name="menu">
     <property name="title">
      <string>?</string>
     </property>
-    <addaction name="actionInformazioni"/>
-    <addaction name="actionGuida"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menu"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
-  <action name="actionInformazioni">
-   <property name="text">
-    <string>Informazioni</string>
-   </property>
-  </action>
-  <action name="actionGuida">
-   <property name="text">
-    <string>Guida</string>
-   </property>
-  </action>
-  <action name="actionEsci_Salva">
-   <property name="text">
-    <string>Esci e Salva</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+W</string>
-   </property>
-  </action>
   <action name="actionEsci">
    <property name="text">
     <string>Esci</string>
@@ -249,23 +240,12 @@
     <string>Ctrl+Q</string>
    </property>
   </action>
-  <action name="actionSalva_con_nome">
+  <action name="actionGestione_Clienti">
    <property name="text">
-    <string>Salva con nome</string>
+    <string>Gestione Clienti</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+S</string>
-   </property>
-  </action>
-  <action name="nome">
-   <property name="text">
-    <string>Bo</string>
-   </property>
-   <property name="toolTip">
-    <string>Passa al campo Nome</string>
-   </property>
-   <property name="shortcut">
-    <string>Alt+L</string>
+    <string>Ctrl+G</string>
    </property>
   </action>
  </widget>

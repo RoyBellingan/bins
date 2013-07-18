@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui sql
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -15,6 +15,10 @@ TEMPLATE = app
 SOURCES += main.cpp\
         bins.cpp
 
-HEADERS  += bins.h
+HEADERS  += bins.h \
+    connection.h \
+    tableeditor.h
 
 FORMS    += bins.ui
+
+QMAKE_CXXFLAGS += -std=c++0x
