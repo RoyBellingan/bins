@@ -1,20 +1,11 @@
 #include "bins.h"
 #include "ui_bins.h"
-#include <QShortcut>
-#include <QDebug>
-#include <QtWidgets>
-#include <QMainWindow>
-#include <QSignalMapper>
-#include <QString>
-#include <QtWidgets>
-#include <QtSql>
-#include <QSqlRecord>
-#include "tableeditor.h"
-#include <QSqlQuery>
+
+#define null 0
 
 bins::bins(QWidget *parent) :    QMainWindow(parent),    ui(new Ui::bins){
 
-QSignalMapper* smap = new QSignalMapper (this) ;
+    QSignalMapper* smap = new QSignalMapper (this) ;
 
     QShortcut *c1 = new QShortcut(QKeySequence("Ctrl+1"),this);
     QShortcut *c5 = new QShortcut(QKeySequence("Ctrl+5"),this);
@@ -36,20 +27,9 @@ QSignalMapper* smap = new QSignalMapper (this) ;
 
     ui->setupUi(this);
     ui->salva_bins->hide ();
-/*
-    connect(ui->nome_ragione, SIGNAL(textChanged(QString)),
-            this, SLOT(filter(QString)));
-    connect(ui->indirizzo, SIGNAL(textChanged(QString)),
-            this, SLOT(filter(QString)));
-    connect(ui->p_iva, SIGNAL(textChanged(QString)),
-            this, SLOT(filter(QString)));
-*/
 
     make_filter ();
 }
-
-
-
 
 void bins::make_filter(){
 
@@ -66,48 +46,79 @@ void bins::make_filter(){
     model->setTable("person");
     model->select();
 
-    //completer = new QCompleter(nome,this);
-    completer = new QCompleter(this);
-    completer->setModel (model);
-    completer->setCompletionColumn (1);
-    completer->setMaxVisibleItems (15);
-    completer->setCaseSensitivity(Qt::CaseInsensitive);
+    completer_1 = new QCompleter(this);
+    completer_1->setModel (model);
+    completer_1->setCompletionColumn (1);
+    completer_1->setCaseSensitivity(Qt::CaseInsensitive);
 
-    ui->nome_ragione->setCompleter (completer);
+    completer_2 = new QCompleter(this);
+    completer_2->setModel (model);
+    completer_2->setCompletionColumn (2);
+    completer_2->setCaseSensitivity(Qt::CaseInsensitive);
 
-    QObject::connect(completer, SIGNAL(activated(QModelIndex)),
-                     this, SLOT(compile(QModelIndex)));
+    completer_3 = new QCompleter(this);
+    completer_3->setModel (model);
+    completer_3->setCompletionColumn (3);
+    completer_3->setCaseSensitivity(Qt::CaseInsensitive);
 
+    ui->nome_ragione->setCompleter (completer_1);
+    ui->p_iva->setCompleter (completer_2);
+    ui->indirizzo->setCompleter (completer_3);
 
+    QObject::connect(completer_1, SIGNAL(activated(QModelIndex)),this, SLOT(filt_1(QModelIndex)));
+    QObject::connect(completer_2, SIGNAL(activated(QModelIndex)),this, SLOT(filt_2(QModelIndex)));
+    QObject::connect(completer_3, SIGNAL(activated(QModelIndex)),this, SLOT(filt_3(QModelIndex)));
 }
 
 
-void bins::compile(const QModelIndex &index){
-    QAbstractItemModel *completionModel = completer->completionModel();
+void bins::filt_1(const QModelIndex &index){
+    QAbstractItemModel *completionModel = completer_1->completionModel();
     QAbstractProxyModel *proxy = qobject_cast<QAbstractProxyModel *>(completionModel);
     if (!proxy)
         return;
-
     QModelIndex sourceIndex = proxy->mapToSource(index);
-    qDebug() << sourceIndex.row ();
+    compile(sourceIndex.row());
+
+}
+
+void bins::filt_2(const QModelIndex &index){
+    QAbstractItemModel *completionModel = completer_2->completionModel();
+    QAbstractProxyModel *proxy = qobject_cast<QAbstractProxyModel *>(completionModel);
+    if (!proxy)
+        return;
+    QModelIndex sourceIndex = proxy->mapToSource(index);
+    compile(sourceIndex.row());
+
+}
+
+void bins::filt_3(const QModelIndex &index){
+    QAbstractItemModel *completionModel = completer_3->completionModel();
+    QAbstractProxyModel *proxy = qobject_cast<QAbstractProxyModel *>(completionModel);
+    if (!proxy)
+        return;
+    QModelIndex sourceIndex = proxy->mapToSource(index);
+    compile(sourceIndex.row());
+
+}
+
+
+
+void bins::compile(const int id){
+
+    ui->nome_ragione->setText (model->record (id).value (1).toString ());
+    ui->p_iva->setText (model->record (id).value (2).toString ());
+    ui->indirizzo->setText (model->record (id).value (3).toString ());
+
 }
 
 void bins::on_nome_ragione_returnPressed(){
-
-    //qDebug() << ui->nome_ragione->completer ()->currentCompletion ();
-    //qDebug() << ui->nome_ragione->completer ()->currentIndex ();
-    //qDebug() << ui->nome_ragione->completer ()->currentRow ();
-    //qDebug() << ui->nome_ragione->completer ()->completionModel ();
-    //qDebug() << completer->dumpObjectTree ();
-
-
-
 
 }
 
 bins::~bins(){
     delete ui;
 }
+
 
 
 void bins::recount(int q){
@@ -131,7 +142,7 @@ void bins::on_actionGestione_Clienti_triggered()
     //editor->setAttribute( Qt::WA_DeleteOnClose );
 
 
-/*
+    /*
     QWidget *window=new QWidget;
     window->resize(320, 240);
 
@@ -160,7 +171,7 @@ void bins::on_salva_bins_clicked(){
 
 
 
-///fai il commit al db...
+    ///fai il commit al db...
 }
 
 
@@ -171,10 +182,9 @@ TableEditor::TableEditor(const QString &tableName, QWidget *parent)	: QWidget(pa
     model->setEditStrategy(QSqlTableModel::OnManualSubmit);
     model->select();
 
-    model->setHeaderData(1, Qt::Horizontal, tr("First name"));
-    model->setHeaderData(2, Qt::Horizontal, tr("Last name"));
-
-    needrow ();
+    model->setHeaderData(1, Qt::Horizontal, tr("Nome"));
+    model->setHeaderData(2, Qt::Horizontal, tr("P.IVA"));
+    model->setHeaderData(3, Qt::Horizontal, tr("Indirizzo"));
 
     view = new QTableView;
     view->setModel(model);
@@ -201,15 +211,14 @@ TableEditor::TableEditor(const QString &tableName, QWidget *parent)	: QWidget(pa
     connect(quitButton, SIGNAL(clicked()), this, SLOT(hide()));
 
     QHBoxLayout *mainLayout = new QHBoxLayout;
-    view->setFixedSize (420,640);
+    view->setMinimumSize (620,640);
     mainLayout->addWidget(view);
     mainLayout->addWidget(buttonBox);
     mainLayout->addStretch (0);
 
     setLayout(mainLayout);
-
-    setWindowTitle(tr("Cached Table"));
-
+    setWindowTitle(tr("Gestione Clienti"));
+    needrow ();
 }
 
 void TableEditor::submit() {
@@ -219,7 +228,6 @@ void TableEditor::submit() {
     if (str.isEmpty ()) {
         model->removeRow (model->rowCount ()-1);
     }
-
     model->database().transaction();
     if (model->submitAll()) {
         model->database().commit();
@@ -231,6 +239,9 @@ void TableEditor::submit() {
                              tr("The database reported an error: %1")
                              .arg(model->lastError().text()));
     }
+    bins* w=bins::get_instance ();
+    w->make_filter();
+
 }
 
 void TableEditor::revertAll() {
