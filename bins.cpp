@@ -10,6 +10,7 @@
 #include <QtSql>
 #include <QSqlRecord>
 #include "tableeditor.h"
+#include <QSqlQuery>
 
 bins::bins(QWidget *parent) :    QMainWindow(parent),    ui(new Ui::bins){
 
@@ -34,12 +35,73 @@ QSignalMapper* smap = new QSignalMapper (this) ;
     editor=new TableEditor("person");
 
     ui->setupUi(this);
-    /*
-    ui->add_bins->setShortcut(QKeySequence("Ctrl+1"));
-    ui->add_bins->setShortcut(QKeySequence("Ctrl+5"));
-    ui->remove_bins->setShortcut(QKeySequence("Alt+1"));
-    ui->remove_bins->setShortcut(QKeySequence("Alt+5"));
-    */
+    ui->salva_bins->hide ();
+/*
+    connect(ui->nome_ragione, SIGNAL(textChanged(QString)),
+            this, SLOT(filter(QString)));
+    connect(ui->indirizzo, SIGNAL(textChanged(QString)),
+            this, SLOT(filter(QString)));
+    connect(ui->p_iva, SIGNAL(textChanged(QString)),
+            this, SLOT(filter(QString)));
+*/
+
+    make_filter ();
+}
+
+
+
+
+void bins::make_filter(){
+
+    QSqlQuery query;
+    query.exec("select id,nome,piva,indirizzo from person");
+    QStringList nome,piva,indirizzo;
+    while (query.next()) {
+        nome.append (query.value(1).toString ());
+        piva.append (query.value(2).toString ());
+        indirizzo.append (query.value(3).toString ());
+    }
+
+    model = new QSqlTableModel(this);
+    model->setTable("person");
+    model->select();
+
+    //completer = new QCompleter(nome,this);
+    completer = new QCompleter(this);
+    completer->setModel (model);
+    completer->setCompletionColumn (1);
+    completer->setMaxVisibleItems (15);
+    completer->setCaseSensitivity(Qt::CaseInsensitive);
+
+    ui->nome_ragione->setCompleter (completer);
+
+    QObject::connect(completer, SIGNAL(activated(QModelIndex)),
+                     this, SLOT(compile(QModelIndex)));
+
+
+}
+
+
+void bins::compile(const QModelIndex &index){
+    QAbstractItemModel *completionModel = completer->completionModel();
+    QAbstractProxyModel *proxy = qobject_cast<QAbstractProxyModel *>(completionModel);
+    if (!proxy)
+        return;
+
+    QModelIndex sourceIndex = proxy->mapToSource(index);
+    qDebug() << sourceIndex.row ();
+}
+
+void bins::on_nome_ragione_returnPressed(){
+
+    //qDebug() << ui->nome_ragione->completer ()->currentCompletion ();
+    //qDebug() << ui->nome_ragione->completer ()->currentIndex ();
+    //qDebug() << ui->nome_ragione->completer ()->currentRow ();
+    //qDebug() << ui->nome_ragione->completer ()->completionModel ();
+    //qDebug() << completer->dumpObjectTree ();
+
+
+
 
 }
 
@@ -53,6 +115,13 @@ void bins::recount(int q){
     ui->contatore_bins->setValue (ui->contatore_bins->value () + q);
 }
 
+void bins::on_delta_bins_valueChanged(int a){
+    if (ui->delta_bins->value ()==0){
+        ui->salva_bins->hide ();
+    }else{
+        ui->salva_bins->show ();
+    }
+}
 
 void bins::on_actionGestione_Clienti_triggered()
 {
@@ -112,6 +181,7 @@ TableEditor::TableEditor(const QString &tableName, QWidget *parent)	: QWidget(pa
     view->setSelectionMode(QAbstractItemView::SingleSelection);
     view->hideColumn (0);
     view->resizeColumnsToContents();
+    view->setSortingEnabled (true);
 
     submitButton = new QPushButton(tr("&Submit"));
     submitButton->setDefault(true);
