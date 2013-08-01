@@ -54,9 +54,6 @@ private slots:
     void filt_3(const QModelIndex &index);
     void compile(const int id);
     void on_actionEsci_triggered();
-    void on_actionSalva_triggered();
-    void on_actionCarica_triggered();
-
 
 private:
     QTableView *view;
@@ -69,6 +66,7 @@ private:
     //QAbstractProxyModel *proxy;
     static bins* instance_ptr;
     explicit bins(QWidget *parent = 0);
+    int id_tab;
 
 
 };

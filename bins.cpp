@@ -29,7 +29,7 @@ bins::bins(QWidget *parent) :    QMainWindow(parent),    ui(new Ui::bins){
 
     connect (smap, SIGNAL(mapped(int)), this, SLOT(recount(int))) ;
 
-    editor=new TableEditor("person");
+    editor=new TableEditor("bins");
 
     ui->setupUi(this);
     ui->salva_bins->hide ();
@@ -40,7 +40,7 @@ bins::bins(QWidget *parent) :    QMainWindow(parent),    ui(new Ui::bins){
 void bins::make_filter(){
 
     QSqlQuery query;
-    query.exec("select id,nome,piva,indirizzo from person");
+    query.exec("select id,nome,piva,indirizzo from bins");
     QStringList nome,piva,indirizzo;
     while (query.next()) {
         nome.append (query.value(1).toString ());
@@ -49,7 +49,7 @@ void bins::make_filter(){
     }
 
     model = new QSqlTableModel(this);
-    model->setTable("person");
+    model->setTable("bins");
     model->select();
 
     completer_1 = new QCompleter(this);
@@ -110,10 +110,13 @@ void bins::filt_3(const QModelIndex &index){
 
 
 void bins::compile(const int id){
-
+    id_tab=id;
     ui->nome_ragione->setText (model->record (id).value (1).toString ());
     ui->p_iva->setText (model->record (id).value (2).toString ());
     ui->indirizzo->setText (model->record (id).value (3).toString ());
+
+    ui->contatore_bins->setValue (model->record (id).value (4).toInt ());
+    ui->delta_bins->setValue (0);
 
 }
 
@@ -176,7 +179,20 @@ void bins::on_actionGestione_Clienti_triggered()
 void bins::on_salva_bins_clicked(){
 
     ui->contatore_bins->setValue (ui->contatore_bins->value() + ui->delta_bins->value());
+    //model->record (id_tab).value (4).setValue(ui->contatore_bins->value());
+    QString qq;
+    qq.append ("UPDATE `bins` SET `bins` = " + QString::number (ui->contatore_bins->value()));
+    qq.append (" WHERE `id` = ");
+    qq.append (model->record (id_tab).value (0).toString ());
+
+    QSqlQuery query;
+    query.exec(qq);
+    qDebug () << query.lastError ();
+    qDebug () << qq.toLatin1 ();
+
     ui->delta_bins->setValue (0);
+
+    ///@todo refresh del model... con falso submit
 
 
     ///fai il commit al db...
@@ -287,53 +303,3 @@ void TableEditor::deleta () {
 void bins::on_actionEsci_triggered(){
     QCoreApplication::exit(0);
 }
-
-void bins::on_actionSalva_triggered(){
-    QSqlQuery query;
-    query.exec("select id,nome,piva,indirizzo,bins from person order by id");
-    QString pack;
-
-    while (query.next()) {
-        pack.append (query.value(0).toString () + " @##@ " + query.value(1).toString () + " @##@ " + query.value(2).toString () + " @##@ " + query.value(3).toString () + " @##@ " + query.value(4).toString () + " @##@\n");
-    }
-
-
-    unsigned long int sec= time(NULL);
-    QString name = QString::number (sec);
-    name.append ("_dump.txt");
-    QFile file(name);
-    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)){
-        ///@todo crisi devi salvare!!!
-        return;
-    }
-    //qDebug() << file.fileName ();
-    file.write (pack.toLocal8Bit ());
-    file.flush ();
-    file.close ();
-
-    //qDebug() << pack.toLatin1 ();
-
-}
-
-void bins::on_actionCarica_triggered(){
-
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

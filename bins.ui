@@ -284,14 +284,7 @@
      <string>File</string>
     </property>
     <addaction name="actionGestione_Clienti"/>
-    <addaction name="actionSalva"/>
-    <addaction name="actionCarica"/>
     <addaction name="actionEsci"/>
-   </widget>
-   <widget class="QMenu" name="menu">
-    <property name="title">
-     <string>?</string>
-    </property>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menu"/>

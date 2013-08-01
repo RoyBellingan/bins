@@ -64,9 +64,9 @@ static bool createConnection()
     QSqlDatabase db = QSqlDatabase::addDatabase("QMYSQL");
 
     db.setHostName("localhost");
-     db.setDatabaseName("test");
-     db.setUserName("test");
-     db.setPassword("test");
+     db.setDatabaseName("bins");
+     db.setUserName("bins");
+     db.setPassword("bins");
     if (!db.open()) {
         QMessageBox::critical(0, qApp->tr("Cannot open database"),
             qApp->tr("Unable to establish a database connection.\n"
