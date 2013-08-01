@@ -1,9 +1,15 @@
 #include "bins.h"
 #include "ui_bins.h"
+#include <time.h>
 
 #define null 0
 
 bins::bins(QWidget *parent) :    QMainWindow(parent),    ui(new Ui::bins){
+
+    QShortcut *s1 = new QShortcut(QKeySequence("Ctrl+s"),this);
+    QObject::connect(s1, SIGNAL(activated()),this, SLOT(on_salva_bins_clicked()));
+
+
 
     QSignalMapper* smap = new QSignalMapper (this) ;
 
@@ -127,6 +133,7 @@ void bins::recount(int q){
 }
 
 void bins::on_delta_bins_valueChanged(int a){
+    a=a+a;
     if (ui->delta_bins->value ()==0){
         ui->salva_bins->hide ();
     }else{
@@ -168,7 +175,8 @@ void bins::on_actionGestione_Clienti_triggered()
 
 void bins::on_salva_bins_clicked(){
 
-
+    ui->contatore_bins->setValue (ui->contatore_bins->value() + ui->delta_bins->value());
+    ui->delta_bins->setValue (0);
 
 
     ///fai il commit al db...
@@ -275,3 +283,57 @@ void TableEditor::deleta () {
         submit();
     }
 }
+
+void bins::on_actionEsci_triggered(){
+    QCoreApplication::exit(0);
+}
+
+void bins::on_actionSalva_triggered(){
+    QSqlQuery query;
+    query.exec("select id,nome,piva,indirizzo,bins from person order by id");
+    QString pack;
+
+    while (query.next()) {
+        pack.append (query.value(0).toString () + " @##@ " + query.value(1).toString () + " @##@ " + query.value(2).toString () + " @##@ " + query.value(3).toString () + " @##@ " + query.value(4).toString () + " @##@\n");
+    }
+
+
+    unsigned long int sec= time(NULL);
+    QString name = QString::number (sec);
+    name.append ("_dump.txt");
+    QFile file(name);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)){
+        ///@todo crisi devi salvare!!!
+        return;
+    }
+    //qDebug() << file.fileName ();
+    file.write (pack.toLocal8Bit ());
+    file.flush ();
+    file.close ();
+
+    //qDebug() << pack.toLatin1 ();
+
+}
+
+void bins::on_actionCarica_triggered(){
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
