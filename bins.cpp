@@ -9,8 +9,6 @@ bins::bins(QWidget *parent) :    QMainWindow(parent),    ui(new Ui::bins){
     QShortcut *s1 = new QShortcut(QKeySequence("Ctrl+s"),this);
     QObject::connect(s1, SIGNAL(activated()),this, SLOT(on_salva_bins_clicked()));
 
-
-
     QSignalMapper* smap = new QSignalMapper (this) ;
 
     QShortcut *c1 = new QShortcut(QKeySequence("Ctrl+1"),this);
@@ -187,15 +185,19 @@ void bins::on_salva_bins_clicked(){
 
     QSqlQuery query;
     query.exec(qq);
-    qDebug () << query.lastError ();
-    qDebug () << qq.toLatin1 ();
+    //qDebug () << query.lastError ();
+    //qDebug () << qq.toLatin1 ();
+    editor->view->sortByColumn (1,Qt::AscendingOrder);
+    make_filter();
 
-    ui->delta_bins->setValue (0);
+
+
 
     ///@todo refresh del model... con falso submit
 
 
     ///fai il commit al db...
+    ui->delta_bins->setValue (0);
 }
 
 
@@ -216,6 +218,7 @@ TableEditor::TableEditor(const QString &tableName, QWidget *parent)	: QWidget(pa
     view->hideColumn (0);
     view->resizeColumnsToContents();
     view->setSortingEnabled (true);
+    view->sortByColumn (1,Qt::AscendingOrder);
 
     submitButton = new QPushButton(tr("&Submit"));
     submitButton->setDefault(true);
@@ -247,11 +250,7 @@ TableEditor::TableEditor(const QString &tableName, QWidget *parent)	: QWidget(pa
 
 void TableEditor::submit() {
 
-    QSqlRecord rec = model->record(model->rowCount ()-1);
-    QString str = rec.value (1).toString ();
-    if (str.isEmpty ()) {
-        model->removeRow (model->rowCount ()-1);
-    }
+
     model->database().transaction();
     if (model->submitAll()) {
         model->database().commit();
@@ -286,6 +285,15 @@ void TableEditor::needrow() {
     }
 
 }
+
+void TableEditor::gankrow() {
+    QSqlRecord rec = model->record(model->rowCount ()-1);
+    QString str = rec.value (1).toString ();
+    if (str.isEmpty ()) {
+        model->removeRow (model->rowCount ()-1);
+    }
+}
+
 
 /**
  * @brief TableEditor::deleta

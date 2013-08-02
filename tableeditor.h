@@ -56,6 +56,10 @@ class TableEditor : public QWidget
 
 public:
     explicit TableEditor(const QString &tableName, QWidget *parent = 0);
+    QSqlTableModel *model;
+    void needrow();
+    void gankrow();
+    QTableView *view;
 
 private slots:
     void submit();
@@ -64,14 +68,14 @@ private slots:
     void deleta();
 
 private:
-    void needrow();
-    QTableView *view;
+
+
     QPushButton *submitButton;
     QPushButton *revertButton;
     QPushButton *quitButton;
     QPushButton *deletaButton;
     QDialogButtonBox *buttonBox;
-    QSqlTableModel *model;
+
 };
 //! [0]
 

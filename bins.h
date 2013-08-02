@@ -26,6 +26,7 @@ namespace Ui {
 class bins;
 }
 
+
 class bins : public QMainWindow
 {
     Q_OBJECT
